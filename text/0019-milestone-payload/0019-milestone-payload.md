@@ -37,12 +37,12 @@ To generate a valid milestone, the Coordinator *MUST*:
 6. Perform the PoW over the Message to compute the value for the Nonce field.
 
 To verify a given milestone, a node *MUST*:
-- Verify the validity of the Message containing the Milestone Payload as in [RFC-0017 (draft)](https://github.com/GalRogozinski/protocol-rfcs/blob/message/text/0017-message/0017-message.md).
-- The payload type *MUST* be 1.
-- The milestone payload must consume the entire byte array the Payload Length field in the Message defines.
-- Select the applicable public keys according to the milestone index, and validate the milestone signatures array by using the exact same ByteArray used to sign the milestone.
-- The amount of valid signatures in the array must be equal or greater than the required minimum configured in the node.
-- Validate Inclusion Merkle Proof as described in [RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md).
+1. Verify the validity of the Message containing the Milestone Payload as in [RFC-0017 (draft)](https://github.com/GalRogozinski/protocol-rfcs/blob/message/text/0017-message/0017-message.md).
+2. The payload type *MUST* be 1.
+3. The milestone payload must consume the entire byte array the Payload Length field in the Message defines.
+4. Select the applicable public keys according to the milestone index, and validate the milestone signatures array by using the exact same ByteArray used to sign the milestone.
+5. The amount of valid signatures in the array must be equal or greater than the required minimum configured in the node.
+6. Validate Inclusion Merkle Proof as described in [RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md).
 
 # Milestone payload
 
