@@ -59,7 +59,5 @@ Instead of going with EdDSA we could have chosen ECDSA. Both algorithms are well
 
 # Unresolved questions
 
-- Should we add support for multi-signature or multi-stage signature? Could that be a desired feature from a devOps perspective?
 - Are we sure we want to lose quantum-robustness? We could have used a hash-based signature scheme, such as [XMSS](https://tools.ietf.org/html/rfc8391) or [LMS](https://tools.ietf.org/html/rfc8554) that provide quantum robustness at the price of increasing both communication and computation overhead. For more detail, please refer to this [document](https://docs.google.com/document/d/15_FkOhHFR4arxBBl07H_ETUGjPbf5jlJOiyYwZ7zKOg/edit?usp=sharing).
-- Do we want to pick Ed25519 or Ed448? They provide a security level of 128-bit and 224-bit respectively. Size of both private and public keys are of 32 or 57 bytes depending on the curve used. Similarly, the signature size is of 64 or 114 bytes. Ed25519 has better library-wise support with respect to Ed448.
 - Should we add a Network ID field to the payload? If yes, is the ID a string or a uint64?
