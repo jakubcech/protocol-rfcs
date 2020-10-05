@@ -20,18 +20,20 @@ Size of both private and public keys are of 32 or 57 bytes depending on the curv
 - The Ed25519 signature function takes a Ed25519 private key, a sequence of bytes of arbitrary size and produces an Ed25519 signature of length 64 bytes. The given sequence of bytes should then be internally hashed (using sha512) by the same function.
 - The Ed25519 verification function takes a public key, a sequence of bytes of arbitrary size, a Ed25519 signature, and returns true/false based on the signature validity.
 
-In order to increase the security of the design, a milestone can optionally be independently signed by multiple keys at once. These keys should be operated by detached signature provider services, running on independent infrastructure elements, thus mitigating the risk of an attacker having access to all the key material necessary for forging milestones. While the Coordinator takes responsibility of forming Milestone Payload Messages, it delegates signing to these providers through an ad-hoc RPC connector. Mutual authentication should be enforced between the Coordinator and the signature providers: a [client-authenticated TLS handshake](https://en.wikipedia.org/wiki/Transport_Layer_Security#Client-authenticated_TLS_handshake) scheme is advisable. For validation purposes, nodes can be configured to require a quorum of valid signatures to consier a milestone as genuine.
+In order to increase the security of the design, a milestone can optionally be independently signed by multiple keys at once. These keys should be operated by detached signature provider services, running on independent infrastructure elements, thus mitigating the risk of an attacker having access to all the key material necessary for forging milestones. While the Coordinator takes responsibility of forming Milestone Payload Messages, it delegates signing to these providers through an ad-hoc RPC connector. Mutual authentication should be enforced between the Coordinator and the signature providers: a [client-authenticated TLS handshake](https://en.wikipedia.org/wiki/Transport_Layer_Security#Client-authenticated_TLS_handshake) scheme is advisable. For validation purposes, nodes can be configured to require a quorum of valid signatures to consider a milestone as genuine.
 
-In addition, a key rotation policy can also be enforced, using milestone indexes as ranges for a determined key to be applicable to a specific milestone. Accordingly, nodes need to maintain a list of public keys mapped to specific milestone ranges.
+In addition, a key rotation policy can also be enforced, using milestone indexes as ranges for a key to be applicable to a specific milestone. Accordingly, nodes need to maintain a list of public keys mapped to specific milestone index ranges.
 
 To generate a valid milestone, the Coordinator *MUST*: 
 1. Generate a *Message* as defined in [RFC-0017 (draft)](https://github.com/GalRogozinski/protocol-rfcs/blob/message/text/0017-message/0017-message.md).
-2. Generate a new [milestone payload](#Milestone-payload), specify the number of signatures count but without filling the signatures array field.
+2. Generate a new [milestone payload](#Milestone-payload), specify the number of provided signatures in the signatures count field but without filling the signatures array field.
 3. Serialize the bytes given by the concatenation of the following fields:
     - Version, Parent1, Parent2, Payload Length of the Message;
     - Payload Type, Index Number, Timestamp, Inclusion Merkle Proof, Signatures Count of the Milestone Payload.
 4. Transmit the serialized bytes to the corresponding number of signature service providers.
-5. Fill the signatures array field of the milestone payload with the received signatures.
+    1. The signature provider service will sign the received serialized bytes as-is.
+    2. The signature provider will serialize the signature bytes and return them to the Coordinator.
+5. Fill the signatures array field of the milestone payload with the received signatures' bytes.
 6. Perform the PoW over the Message to compute the value for the Nonce field.
 
 To verify a given milestone, a node *MUST*:
@@ -49,7 +51,7 @@ To verify a given milestone, a node *MUST*:
 | Payload Type           | uint32          | Must be set to **1**.                                                                                                                                                                                                                                                                                   |
 | Index Number           | uint64          | The index number of the milestone.                                                                                                                                                                                                                                                                      |
 | Timestamp              | uint64          | The Unix timestamp at which the milestone was issued. The unix timestamp is specified in seconds.                                                                                                                                                                                                       |
-| Inclusion Merkle Proof | Array<byte>[64] | Specifies the merkle proof which is computed out of all the tail transaction hashes of all the newly confirmed state-mutating bundles. ([RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md)) |
+| Inclusion Merkle Proof | Array<byte>[64] | Specifies the Merkle Proof which is computed out of all the tail transaction hashes of all the newly confirmed state-mutating bundles. ([RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md)) |
 | Signatures Count       | uint8           | Number of signatures provided in the milestone. |
 | Signatures             | Array[Array<byte>[64]] | An array of signatures signing the entire message excluding the nonce and the signatures array itself. There are `Signatures Count` Signatures in this array. |
 
