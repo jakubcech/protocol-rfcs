@@ -40,7 +40,7 @@ To verify a given milestone, a node *MUST*:
 1. Verify the validity of the Message containing the Milestone Payload as in [RFC-0017 (draft)](https://github.com/GalRogozinski/protocol-rfcs/blob/message/text/0017-message/0017-message.md).
 2. The payload type *MUST* be 1.
 3. The milestone payload must consume the entire byte array the Payload Length field in the Message defines.
-4. Select the applicable public keys according to the milestone index, and validate the milestone signatures array by using the exact same ByteArray used to sign the milestone.
+4. Select the applicable public keys according to the milestone index, and validate the milestone signatures array by using the exact same field concatenation used to sign the milestone.
 5. The amount of valid signatures in the array must be equal or greater than the required minimum configured in the node.
 6. Validate Inclusion Merkle Proof as described in [RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md).
 
@@ -51,9 +51,9 @@ To verify a given milestone, a node *MUST*:
 | Payload Type           | uint32          | Must be set to **1**.                                                                                                                                                                                                                                                                                   |
 | Index Number           | uint64          | The index number of the milestone.                                                                                                                                                                                                                                                                      |
 | Timestamp              | uint64          | The Unix timestamp at which the milestone was issued. The unix timestamp is specified in seconds.                                                                                                                                                                                                       |
-| Inclusion Merkle Proof | Array<byte>[64] | Specifies the Merkle Proof which is computed out of all the tail transaction hashes of all the newly confirmed state-mutating bundles. ([RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md)) |
+| Inclusion Merkle Proof | Array\<uint8\>[64] | Specifies the Merkle Proof which is computed out of all the tail transaction hashes of all the newly confirmed state-mutating bundles. ([RFC-0012](https://github.com/iotaledger/protocol-rfcs/blob/master/text/0012-milestone-merkle-validation/0012-milestone-merkle-validation.md)) |
 | Signatures Count       | uint8           | Number of signatures provided in the milestone. |
-| Signatures             | Array[Array<byte>[64]] | An array of signatures signing the entire message excluding the nonce and the signatures array itself. There are `Signatures Count` Signatures in this array. |
+| Signatures             | Array\<Array\<uint8\>[64]\> | An array of signatures signing the entire message excluding the nonce and the signatures array itself. There are `Signatures Count` Signatures in this array. |
 
 # Rationale and alternatives
 
